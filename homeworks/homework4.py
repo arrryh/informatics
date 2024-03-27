@@ -9,13 +9,15 @@ result = random_element(a)
 print(result)
 
 
-
 #2
 import os
 
-def random_file(lst):
-    return random.choice(lst)
+def random_file(directory):
+    files = os.listdir(directory)
+    random_file = random.choice(files)
+    return random_file
 
-files = os.listdir('images/cats/')
-file = random_file(files)
-print(file)
+
+directory = "images/cats"
+random_image = random_file(directory)
+print(random_image)
