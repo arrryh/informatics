@@ -7,6 +7,8 @@ Basic example for a bot that uses inline keyboards. For an in-depth explanation,
  https://github.com/python-telegram-bot/python-telegram-bot/wiki/InlineKeyboard-Example.
 """
 import logging
+import os
+import random
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
@@ -20,6 +22,10 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
+def random_file(directory):
+    files = os.listdir(directory)
+    random_file = random.choice(files)
+    return random_file
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Sends a message with three inline buttons attached."""
@@ -44,7 +50,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     await query.answer()
 
-    folder = 'dogs'
+    folder = ''
 
     if query.data == '1':
         folder = 'cats'
@@ -53,8 +59,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     else:
         folder = 'cats'
 
-    img_path = f'images/{folder}/1.jpg'
+    image_name = random_file(f'images/{folder}')
+    image_path = f'images/{folder}/{image_name}'
 
+    await query.message.reply_photo(
+        photo=open(image_path, 'rb')
+    )
 
     await query.edit_message_text(text=f"Selected option: {query.data}")
 
